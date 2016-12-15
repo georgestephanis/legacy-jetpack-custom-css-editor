@@ -91,20 +91,6 @@ class Legacy_Jetpack_Custom_CSS_Editor {
 			set_theme_mod( 'jetpack_custom_css', $jetpack_custom_css );
 		}
 
-		if ( $jetpack_custom_css['preprocessor'] ) {
-			/** This filter is documented in jetpack/modules/custom-css/custom-css.php */
-			$preprocessors = apply_filters( 'jetpack_custom_css_preprocessors', array() );
-
-			if ( isset( $preprocessors[ $jetpack_custom_css['preprocessor'] ] ) ) {
-				$pre = Jetpack_Custom_CSS_Enhancements::sanitize_css( $_POST['css'] );
-				$css = call_user_func( $preprocessors[  $jetpack_custom_css['preprocessor'] ]['callback'], $pre );
-
-				wp_update_custom_css_post( $css, array( 'preprocessed' => $pre ) );
-				wp_safe_redirect( $_POST['_wp_http_referer'] . '#saved' );
-				return;
-			}
-		}
-
 		$css = Jetpack_Custom_CSS_Enhancements::sanitize_css( $_POST['css'] );
 		wp_update_custom_css_post( $css );
 		wp_safe_redirect( $_POST['_wp_http_referer'] . '#saved' );
