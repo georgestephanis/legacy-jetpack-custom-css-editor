@@ -5,7 +5,7 @@
  * Plugin URI: http://github.com/georgestephanis/legacy-jetpack-custom-css-editor
  * Description: This plugin re-adds the full page admin Custom CSS editor to Jetpack.
  * Author: George Stephanis
- * Version: 0.1-dev
+ * Version: 0.1.1
  * Author URI: https://stephanis.info
  */
 

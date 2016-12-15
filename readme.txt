@@ -3,7 +3,7 @@ Contributors: georgestephanis
 Tags: custom css, jetpack
 Requires at least: 4.7
 Tested up to: 4.8-dev
-Stable tag: 0.1-dev
+Stable tag: 0.1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -21,5 +21,8 @@ more basic text editor without syntax highlighting.
 
 == Changelog ==
 
-= 0.1-dev =
+= 0.1.1 =
+* Minor tweaks to iron out a few trivial php warnings.
+
+= 0.1 =
 * Initial Release.
