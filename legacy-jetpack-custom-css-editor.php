@@ -73,25 +73,32 @@ class Legacy_Jetpack_Custom_CSS_Editor {
 			wp_die( __( 'Error: Missing Jetpack.', 'jetpack' ) );
 		}
 
-		if ( isset( $_POST['jetpack_custom_css'] ) ) {
-			$jetpack_custom_css = array();
+		$css = $_POST['css'];
+		if ( class_exists( 'Jetpack_Custom_CSS_Enhancements' ) ) {
+			$jetpack_custom_css = array(
+				'preprocessor'  => null,
+				'replace'       => null,
+				'content_width' => null,
+			);
 
-			$jetpack_custom_css['preprocessor'] = null;
 			if ( ! empty( $_POST['jetpack_custom_css']['preprocessor'] ) ) {
 				$jetpack_custom_css['preprocessor'] = Jetpack_Custom_CSS_Enhancements::sanitize_preprocessor( $_POST['jetpack_custom_css']['preprocessor'] );
 			}
 
-			$jetpack_custom_css['replace'] = ! empty( $_POST['jetpack_custom_css']['replace'] );
+			if ( ! empty( $_POST['jetpack_custom_css']['replace'] ) ) {
+				$jetpack_custom_css['replace'] = true;
+			};
 
-			$jetpack_custom_css['content_width'] = null;
 			if ( ! empty( $_POST['jetpack_custom_css']['content_width'] ) ) {
 				$jetpack_custom_css['content_width'] = intval( $_POST['jetpack_custom_css']['content_width'], 10 );
 			}
 
 			set_theme_mod( 'jetpack_custom_css', $jetpack_custom_css );
+
+			// And then run our sanitizing.
+			$css = Jetpack_Custom_CSS_Enhancements::sanitize_css( $css, array( 'preprocessor' => $jetpack_custom_css['preprocessor'] ) );
 		}
 
-		$css = Jetpack_Custom_CSS_Enhancements::sanitize_css( $_POST['css'] );
 		wp_update_custom_css_post( $css );
 		wp_safe_redirect( $_POST['_wp_http_referer'] . '#saved' );
 	}
