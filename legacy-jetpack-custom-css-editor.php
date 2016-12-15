@@ -130,6 +130,11 @@ class Legacy_Jetpack_Custom_CSS_Editor {
 		if ( class_exists( 'Jetpack_Custom_CSS_Enhancements' ) ) {
 			$jetpack_custom_css = get_theme_mod( 'jetpack_custom_css', array() );
 		}
+		$jetpack_custom_css = wp_parse_args( $jetpack_custom_css, array(
+			'preprocessor'  => null,
+			'replace'       => null,
+			'content_width' => null,
+		) );
 		?>
 		<div class="wrap">
 			<h1>
