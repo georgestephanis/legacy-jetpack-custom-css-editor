@@ -27,6 +27,7 @@ class Legacy_Jetpack_Custom_CSS_Editor {
 		add_action( 'admin_menu', array( __CLASS__, 'admin_menu' ) );
 		add_action( 'admin_init', array( __CLASS__, 'admin_init' ) );
 		add_action( 'admin_post_legacy_jetpack_update_custom_css', array( __CLASS__, 'legacy_jetpack_update_custom_css' ) );
+		add_action( 'wp_ajax_legacy_jetpack_preview_custom_css', array( __CLASS__, 'legacy_jetpack_preview_custom_css' ) );
 	}
 
 	/**
@@ -103,6 +104,77 @@ class Legacy_Jetpack_Custom_CSS_Editor {
 		wp_safe_redirect( $_POST['_wp_http_referer'] . '#saved' );
 	}
 
+	public static function legacy_jetpack_preview_custom_css() {
+		$stylesheet = get_stylesheet();
+		if ( ! wp_verify_nonce( $_POST['_wpnonce'], "legacy_jetpack_update_custom_css-{$stylesheet}" ) ) {
+			wp_send_json_error( array(
+				'message' => __( 'Bad nonce!', 'jetpack' ),
+			) );
+			return;
+		}
+
+		if ( ! current_user_can( 'edit_css' ) ) {
+			wp_send_json_error( array(
+				'message' => __( "Cheatin', uh?", 'jetpack' ),
+			) );
+			return;
+		}
+
+		$changeset_data = array(
+			"custom_css[{$stylesheet}]" => array(
+				'value' => $_POST['css'],
+				'type'  => 'custom_css',
+			),
+		);
+
+		if ( class_exists( 'Jetpack_Custom_CSS_Enhancements' ) ) {
+			$changeset_data[ "{$stylesheet}::jetpack_custom_css[preprocessor]" ]  = array(
+				'value' => '',
+				'type'  => 'theme_mod',
+			);
+			if ( ! empty( $_POST['jetpack_custom_css']['preprocessor'] ) ) {
+				$changeset_data[ "{$stylesheet}::jetpack_custom_css[preprocessor]" ] = array(
+					'value' => Jetpack_Custom_CSS_Enhancements::sanitize_preprocessor( $_POST['jetpack_custom_css']['preprocessor'] ),
+					'type'  => 'theme_mod',
+				);
+			}
+
+			$changeset_data[ "{$stylesheet}::jetpack_custom_css[replace]" ]       = array(
+				'value' => '',
+				'type'  => 'theme_mod',
+			);
+			if ( ! empty( $_POST['jetpack_custom_css']['replace'] ) ) {
+				$changeset_data[ "{$stylesheet}::jetpack_custom_css[replace]" ] = array(
+					'value' => true,
+					'type'  => 'theme_mod',
+				);
+			};
+
+			$changeset_data[ "{$stylesheet}::jetpack_custom_css[content_width]" ] = array(
+				'value' => null,
+				'type'  => 'theme_mod',
+			);;
+			if ( ! empty( $_POST['jetpack_custom_css']['content_width'] ) ) {
+				$changeset_data[ "{$stylesheet}::jetpack_custom_css[content_width]" ] = array(
+					'value' => intval( $_POST['jetpack_custom_css']['content_width'], 10 ),
+					'type'  => 'theme_mod',
+				);
+			}
+		}
+
+		$uuid = wp_generate_uuid4();
+		$post_id = wp_insert_post( array(
+			'post_type' => 'customize_changeset',
+			'post_name' => $uuid,
+			'post_content' => addslashes( wp_json_encode( $changeset_data ) ),
+			'post_status' => 'draft',
+		) );
+
+		wp_send_json_success( array(
+			'uuid' => $uuid,
+		) );
+	}
+
 	/**
 	 * Handle output of the admin page.
 	 */
@@ -142,7 +214,7 @@ class Legacy_Jetpack_Custom_CSS_Editor {
 				}
 				?>
 			</h1>
-			<form action="admin-post.php" method="POST">
+			<form action="admin-post.php" method="POST" id="legacy-form">
 				<input type="hidden" name="action" value="legacy_jetpack_update_custom_css" />
 				<?php wp_nonce_field( "legacy_jetpack_update_custom_css-{$stylesheet}" ); ?>
 				<div id="poststuff">
