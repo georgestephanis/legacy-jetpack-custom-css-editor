@@ -1,0 +1,9 @@
+.css-help #fullscreen-link {
+	border-bottom: 0;
+	float: right;
+	padding-right: 5px;
+}
+
+.css-help a#fullscreen-link:before {
+	content: "\f211";
+}
