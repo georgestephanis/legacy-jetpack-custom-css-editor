@@ -172,6 +172,7 @@ class Legacy_Jetpack_Custom_CSS_Editor {
 
 		wp_send_json_success( array(
 			'uuid' => $uuid,
+			'redirect' => add_query_arg( array( 'customize_changeset_uuid' => $uuid ), home_url() ),
 		) );
 	}
 

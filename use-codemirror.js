@@ -71,7 +71,7 @@
 		$.post( ajaxurl + '?action=legacy_jetpack_preview_custom_css', formdata, function(data, textStatus) {
 			if ( data.success ) {
 				console.log( data.data.uuid );
-				var win = window.open( 'customize.php?autofocus%5Bsection%5D=custom_css&changeset_uuid=' + data.data.uuid, '_blank' );
+				var win = window.open( data.data.redirect, '_blank' );
 				if ( win ) {
 					win.focus();
 				} else {
