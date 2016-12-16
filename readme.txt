@@ -3,7 +3,7 @@ Contributors: georgestephanis
 Tags: custom css, jetpack
 Requires at least: 4.7
 Tested up to: 4.8-dev
-Stable tag: 0.1.1
+Stable tag: 0.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -20,6 +20,9 @@ but shortly it will work without Jetpack as well, providing a
 more basic text editor without syntax highlighting.
 
 == Changelog ==
+
+= 0.9 =
+* Preview works, powered by the Core Customizer's data store.
 
 = 0.1.1 =
 * Minor tweaks to iron out a few trivial php warnings.
