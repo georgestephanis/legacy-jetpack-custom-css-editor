@@ -5,7 +5,7 @@
  * Plugin URI: http://github.com/georgestephanis/legacy-jetpack-custom-css-editor
  * Description: This plugin re-adds the full page admin Custom CSS editor to Jetpack.
  * Author: George Stephanis
- * Version: 0.9
+ * Version: 0.9.1
  * Author URI: https://stephanis.info
  */
 
@@ -15,6 +15,8 @@
  *
  * Hopefully it will work that way in the future.
  */
+
+define( 'LEGACY_JP_CSS__VERSION', '0.9.1' );
 
 class Legacy_Jetpack_Custom_CSS_Editor {
 	/**
@@ -28,6 +30,7 @@ class Legacy_Jetpack_Custom_CSS_Editor {
 		add_action( 'admin_init', array( __CLASS__, 'admin_init' ) );
 		add_action( 'admin_post_legacy_jetpack_update_custom_css', array( __CLASS__, 'legacy_jetpack_update_custom_css' ) );
 		add_action( 'wp_ajax_legacy_jetpack_preview_custom_css', array( __CLASS__, 'legacy_jetpack_preview_custom_css' ) );
+		add_action( 'customize_controls_enqueue_scripts', array( __CLASS__, 'legacy_jetpack_enqueue_customizer_link' ) );
 	}
 
 	/**
@@ -41,8 +44,12 @@ class Legacy_Jetpack_Custom_CSS_Editor {
 		if ( ! class_exists( 'Jetpack_Custom_CSS_Enhancements' ) ) {
 			return;
 		}
-		wp_register_script( 'legacy-jetpack-custom-css-editor', plugins_url( 'use-codemirror.js', __FILE__ ), array( 'underscore', 'jetpack-codemirror' ), '0.1-dev', true );
+		wp_register_script( 'legacy-jetpack-custom-css-editor', plugins_url( 'use-codemirror.js', __FILE__ ), array( 'underscore', 'jetpack-codemirror' ), LEGACY_JP_CSS__VERSION, true );
 		wp_register_script( 'legacy-no-jetpack-custom-css-editor', plugins_url( 'no-jetpack', __FILE__ ) );
+
+		// Register script to add a full screen button to the customizer.
+		wp_register_script( 'legacy-jetpack-custom-css-customizer-link', plugins_url( 'customizer-link.js', __FILE__ ) );
+		wp_register_style( 'legacy-jetpack-custom-css-customizer-link', plugins_url( 'customizer-link.css', __FILE__ ), array( 'jetpack-customizer-css' ), LEGACY_JP_CSS__VERSION );
 	}
 
 	/**
@@ -333,6 +340,20 @@ class Legacy_Jetpack_Custom_CSS_Editor {
 			}
 		</style>
 		<?php
+	}
+
+	/**
+	 * Enqueue a JS file in the customizer, to output a link to the legacy editor.
+	 *
+	 * @since 0.9.1
+	 */
+	public static function legacy_jetpack_enqueue_customizer_link() {
+		wp_enqueue_style( 'legacy-jetpack-custom-css-customizer-link' );
+		wp_enqueue_script( 'legacy-jetpack-custom-css-customizer-link' );
+		wp_localize_script( 'legacy-jetpack-custom-css-customizer-link', 'legacy_jetpack_css_settings', array(
+			'fullscreenURL' => admin_url( 'themes.php?page=legacy-editcss' ),
+			'title' => _x( 'Full Screen', 'Toolbar button to access the CSS editor in a full-scren window.', 'jetpack' ),
+		));
 	}
 }
 

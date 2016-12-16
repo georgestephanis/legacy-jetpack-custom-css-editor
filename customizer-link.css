@@ -1,0 +1,23 @@
+.CodeMirror-wrap {
+	border-top: 0 none;
+}
+
+#fullscreenlinks {
+	background: #eee;
+}
+
+.css-help #fullscreen-link {
+	border-bottom: 0;
+	color: #aaa;
+	float: right;
+	padding-right: 5px;
+}
+
+.css-help a#fullscreen-link:hover {
+	background-color: #eee;
+	color: #0073aa;
+}
+
+.css-help a#fullscreen-link:before {
+	content: "\f211";
+}
